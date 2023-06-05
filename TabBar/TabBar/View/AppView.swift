@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct AppView: View {
-    @State var selectTab = "1"
+    @State var selectTab = "Main"
     
-    let tabs = ["Home","Search","Message","Settings"]
-//    var tabs = ["Main": "house",
-//                "Search":"magnifyingglass",
-//                "Message": "message",
-//                "Settings":"gearshape"]
+    let tabs = ["Main": "house",
+                "Search":"magnifyingglass",
+                "Message": "message",
+                "Settings":"gearshape"]
     
     init() {
         UITabBar.appearance().isHidden = true
@@ -24,7 +23,7 @@ struct AppView: View {
         ZStack(alignment: .bottom){
             TabView(selection: $selectTab){
                 HomeView()
-                    .tag("Home")
+                    .tag("Main")
                 Text("Search")
                     .tag("Search")
                 Text("Message")
@@ -33,26 +32,29 @@ struct AppView: View {
                     .tag("Settings")
             }
             HStack{
-                ForEach(tabs, id: \.self){
-                    tab in TabBarItem(tab: tab)
+                ForEach(tabs.sorted(by: <), id: \.key) { key, value in
+                    TabBarItem(tab: key, image: tabs[key] ?? "", selectTab: $selectTab)
                 }
             }
             .padding(.vertical, 20)
             .frame(maxWidth: .infinity)
-            .background(.green)
+            .background(Color.green)
         }
     }
 }
 
-struct TabBarItem: View{
+struct TabBarItem: View {
     @State var tab: String
-    var body: some View{
-        ZStack{
-            Button{
-//                selectTab = "1"
-            } label: {
-                HStack{
-//                    Image(systemName: tab)
+    var image: String
+    @Binding var selectTab: String
+    
+    var body: some View {
+        ZStack {
+            Button(action: {
+                selectTab = tab
+            }) {
+                HStack {
+                    Image(systemName: image)
                     Text(tab)
                 }
             }
